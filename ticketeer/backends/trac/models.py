@@ -1,0 +1,1 @@
+# Fake being an app so we can run tests.

@@ -3,95 +3,99 @@ The trac backend simulates a Trac environment in order to leave as much of the w
 
 """
 
-from datetime import datetime
-
 from django.conf import settings
 from trac.env import Environment
-from trac.ticket.query import QueryModule, Query
-from trac.util.datefmt import utc
-from trac.web.api import Request
+from trac.ticket.api import TicketSystem
+from trac.ticket.model import Ticket
+from trac.ticket.query import Query
+
+from ticketeer.backends.base import BaseBackend
 
 
-class FakeTracPermission(object):
-	"""Fake object to give all permissions always."""
-	def assert_permission(self, perm):
-		return True
-	
-	def __contains__(self, item):
-		return True
-	
-	def __call__(self, *args, **kwargs):
-		return self
-
-
-class FakeTracRequest(object):
-	"""
-	Wraps a Django HttpRequest so that it looks and acts like a Trac request.
-	
-	"""
-	def __init__(self, request):
-		self.request = request
-		self.perm = FakeTracPermission()
-		self.session = {}
-		self.authname = None
-	
-	@property
-	def args(self):
-		return self.request.GET
-	
-	@property
-	def arg_list(self):
-		return self.request.GET.items()
-
-
-class TracBackend(object):
+class TracBackend(BaseBackend):
 	"""
 	Provides methods for returning the necessary data for a ticket search/a filtered ticket view, a ticket detail view, and an attachment (diff) view.
 	
 	Also provides methods for submitting, editing, and commenting on tickets.
 	
 	"""
+	key = 'trac'
 	
 	def __init__(self):
 		self.env = Environment(settings.TICKETEER_TRAC_ENV)
 	
-	def _get_trac_request(self, path):
-		"""Builds a Trac request which pretends to be pointed at the given path."""
-		return Request({}, lambda x: x)
-		
+	def get_ticket(self, ticket_id=None):
+		"""Returns a ticket from the database for the given ticket_id. The ticket should be treated like a dictionary for data access."""
+		return Ticket(self.env, ticket_id, version=None)
 	
-	def get_ticket(self, request):
-		pass
+	def get_ticket_list(self, cleaned_data):
+		constraints = self._parse_cleaned_data(cleaned_data)
+		query = self._build_query(constraints)
+		return query.execute()
 	
-	def get_ticket_list(self, request):
-		# Some data (which report is being used, sorting, verbosity...) is
-		# pulled directly from request.GET.
-		query_module = QueryModule(self.env)
-		req = FakeTracRequest(request)
-		constraints = query_module._get_constraints(req)
+	def _parse_cleaned_data(self, cleaned_data):
+		"""Given a form's cleaned_data, builds a dictionary of constraints suitable for trac."""
+		clauses = []
+		query_string = cleaned_data['q']
+		return [{k: query_string} for k in ('cc', 'description', 'keywords', 'owner', 'reporter', 'summary') if query_string]
+	
+	def _build_query(self, constraints):
+		"""
+		Builds a :class:`trac.ticket.query.Query` object from this form's cleaned_data.
 		
-		qd = request.GET
-		
-		kwargs = {
-			'cols': qd.getlist('col'),
-			'rows': qd.getlist('row'),
-			'constraints': constraints
+		"""
+		query_kwargs = {
+			# Query expects the following args on instantiation:
+			#
+			# env: The trac environment. This is the only required item.
+			'env': self.env,
+			# constraints: the actual filter constraints.
+			'constraints': constraints,
+			# cols: Fields which are displayed in the query. For now, we should
+			#       just fetch all the fields, since the actual display should
+			#       be controlled in the template. Those fields are:
+			#           cc				Cc
+			#           component		Component
+			#           time			Created
+			#           description		Description
+			#           keywords		Keywords
+			#           milestone		Milestone
+			#           changetime		Modified
+			#           owner			Owner
+			#           priority		Priority
+			#           reporter		Reporter
+			#           resolution		Resolution
+			#           status			Status
+			#           summary			Summary
+			#           id				Ticket
+			#           type			Type
+			#           version			Version
+			#       (We actually gather all available fields dynamically.)
+			'cols': [f['name'] for f in TicketSystem(self.env).get_ticket_fields()],
+			# order: The field to order by.
+			# desc: Whether the ordering is descending or ascending.
+			#
+			#
+			# report: id of a cached query. Ignore.
+			# rows: Can be set to display the ticket description beneath the
+			#       summary. These would be added to the query, but we're
+			#       already using all the fields anyway, so ignore this.
+			# page, max: The page number and max number of objects. Together
+			#            these are used for pagination, which should be handled
+			#            by django. Therefore, we ignore this for now.
+			#
+			#            TODO: Set these later, during pagination in a custom
+			#            paginator?
+			#
+			# max: The max number of objects. Is this used in the query?
+			# format: Used to determine how each ticket is displayed by trac.
+			#         Ignore this.
+			# verbose: Same as having ``description`` in the rows. Ignore this.
+			# report: the id of a corresponding saved query. We just ignore
+			#         this.
+			# group: Which field to group by. See the list of fields above.
+			#        Ignore for now.
+			# groupdesc: Whether the groups should be in reversed order. Ignore
+			#            for now.
 		}
-		
-		kwargs.update(dict([
-			(k, qd.get(k))
-			for k in ('format', 'max', 'report', 'order', 'group', 'page')
-		]))
-		
-		kwargs.update(dict([
-			(k, k in qd) for k in 'desc', 'groupdesc', 'verbose'
-		]))
-		
-		orig_list = None
-		orig_time = datetime.now(utc)
-		query = Query(self.env, **kwargs)
-		tickets = query.execute()
-		return tickets
-	
-	def get_attachment(self, request):
-		pass
+		return Query(**query_kwargs)

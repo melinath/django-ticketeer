@@ -1,13 +1,16 @@
+from ticketeer.backends.base import BaseBackend
+
 
 class Ticket(object):
 	"""
 	A ticket mock
 	"""
-	id = 1
-	title = "Ticket name"
-	description = "Ticket Description"
+	def __init__(self, id=1, name="Ticket Name", description="Ticket Description"):
+		self.id = id
+		self.name = name
+		self.description = description
 
-class DummyBackend(object):
+class DummyBackend(BaseBackend):
 	"""
 	Dummy backend
 	"""
@@ -16,7 +19,4 @@ class DummyBackend(object):
 		return Ticket()
 	
 	def get_ticket_list(self, request):
-		return [Ticket(),Ticket()]
-	
-	def get_attachment(self, request):
-		pass
+		return [Ticket(1),Ticket(2)]

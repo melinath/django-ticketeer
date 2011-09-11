@@ -1,0 +1,15 @@
+{% extends 'ticketeer/__base.html' %}
+
+{% block content %}
+	<table>
+		<thead>
+			<th>Ticket ID</th>
+			<th>Summary</th>
+		</thead>
+		<tbody>
+		{% for ticket in ticket_list %}
+			{% include "ticketeer/tickets/_list.html" %}
+		{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

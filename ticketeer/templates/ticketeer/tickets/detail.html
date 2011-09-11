@@ -1,0 +1,9 @@
+{% extends 'ticketeer/__base.html' %}
+
+{% block content %}
+	{% block ticket %}
+	<article>
+		{% include 'ticketeer/tickets/_detail.html' %}
+	</article>
+	{% endblock %}
+{% endblock %}
