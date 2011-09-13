@@ -29,15 +29,11 @@ class TracBackend(BaseBackend):
 		return Ticket(self.env, ticket_id, version=None)
 	
 	def get_ticket_list(self, cleaned_data):
-		constraints = self._parse_cleaned_data(cleaned_data)
-		query = self._build_query(constraints)
-		return query.execute()
-	
-	def _parse_cleaned_data(self, cleaned_data):
-		"""Given a form's cleaned_data, builds a dictionary of constraints suitable for trac."""
 		clauses = []
 		query_string = cleaned_data['q']
-		return [{k: query_string} for k in ('cc', 'description', 'keywords', 'owner', 'reporter', 'summary') if query_string]
+		constraints = [{k: ["~%s" % query_string]} for k in ('cc', 'description', 'keywords', 'owner', 'reporter', 'summary') if query_string]
+		query = self._build_query(constraints)
+		return query.execute()
 	
 	def _build_query(self, constraints):
 		"""

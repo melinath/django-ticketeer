@@ -4,6 +4,11 @@
 	{% block ticket %}
 	<article>
 		{% include 'ticketeer/tickets/_detail.html' %}
+		<form method='post' action='{{ request.path }}'>
+			<table>
+				{{ form }}
+			</table>
+		</form>
 	</article>
 	{% endblock %}
 {% endblock %}
