@@ -1,1 +1,69 @@
 @import "compass/reset";
+@import "compass/css3";
+
+$em: 14px;
+
+html, body, #container{
+	width:100%;
+	height:100%;
+	background:#aaa;
+	font-size:$em;
+}
+
+#main, #container > header h1, #container > header nav ul{
+	width:800px;
+	margin:auto;
+}
+
+#container{
+	position:relative;
+	
+	& > header{
+		background:#222224;
+		h1 a{
+			font-size:4*$em;
+			color:#ccc;
+			text-decoration:none;
+			display:block;
+		}
+		nav{
+			background:#ccc;
+			line-height:2*$em;
+			height:2*$em;
+			
+			ul li{
+				float:left;
+				
+				a{
+					display:block;
+					text-decoration:none;
+					color:#666;
+					padding:0 $em;
+					
+					&:hover{
+						background:#ddd;
+					}
+				}
+			}
+		}
+	}
+}
+
+#container > footer {
+	background:#222224;
+	min-height:10*$em;
+	position:absolute;
+	bottom:0;
+	left:0;
+	width:100%;
+}
+
+#main{
+	@include box-shadow(#444, 0, 0, 5px);
+	background:#ccc;
+	
+	p, table, blockquote, ul, ol{
+		line-height: 1.5em;
+		margin-bottom:1.5*$em;
+	}
+}
