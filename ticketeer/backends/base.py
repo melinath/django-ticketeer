@@ -7,13 +7,16 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 
+SEARCH_PLACEHOLDER = _("Search for tickets")
+
+
 class BaseQueryForm(forms.Form):
-	q = forms.CharField(label=_("Search"), required=False, widget=forms.TextInput(attrs={'type': 'search', 'placeholder': _("Search")}))
+	q = forms.CharField(label=SEARCH_PLACEHOLDER, required=False, widget=forms.TextInput(attrs={'type': 'search', 'placeholder': SEARCH_PLACEHOLDER}))
 
 
 class BaseAddForm(forms.Form):
 	summary = forms.CharField(label=_("Summary"))
-	description = forms.CharField(label=_("Description"), widget=forms.TextInput)
+	description = forms.CharField(label=_("Description"), widget=forms.Textarea)
 
 
 class BaseEditForm(BaseAddForm):
@@ -45,8 +48,8 @@ class BaseBackend(object):
 		"""Receives cleaned_data from a QueryForm and returns a list of tickets which adhere to that data."""
 		raise NotImplementedError
 	
-	def add_ticket(self, cleaned_data):
-		"""Receives cleaned_data from an AddForm and saves the ticket to the backend. Returns the id of the new ticket."""
+	def add_ticket(self, request, cleaned_data):
+		"""Receives a request and cleaned_data from an AddForm and saves a ticket to the backend based on that data. Returns the id of the new ticket."""
 		raise NotImplementedError
 	
 	def edit_ticket(self, cleaned_data):

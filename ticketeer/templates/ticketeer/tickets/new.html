@@ -1,0 +1,21 @@
+{% extends "ticketeer/__base.html" %}
+{% load i18n %}
+
+{% block bodyclasses %}{{ block.super }} new{% endblock %}
+
+{% block content %}
+<form class='new' action="{{ request.path }}" method="post">{% csrf_token %}
+<table>
+	<tfoot>
+		<tr>
+			<td colspan=2>
+			<button type="submit">{% trans "Create ticket" %}</button>
+			</td>
+		</tr>
+	</tfoot>
+	<tbody>
+		{{ form }}
+	</tbody>
+</table>
+</form>
+{% endblock %}

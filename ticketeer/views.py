@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.views.generic import DetailView, ListView, TemplateView
-from django.views.generic.edit import ProcessFormView, FormMixin
+from django.views.generic.edit import FormView
+
 from ticketeer.backends import backend
 
 
@@ -37,7 +39,7 @@ class TicketListView(ListView):
 		return context
 
 
-class TicketDetailView(ProcessFormView, FormMixin, DetailView):
+class TicketDetailView(FormView, DetailView):
 	context_object_name = 'ticket'
 	
 	def get_form_class(self):
@@ -64,19 +66,22 @@ class TicketDetailView(ProcessFormView, FormMixin, DetailView):
 		return DetailView.get_context_data(self, object=self.object, **kwargs)
 
 
-class TicketAddView(ProcessFormView, FormMixin):
+class TicketCreateView(FormView):
 	def get_form_class(self):
 		return backend.add_form
 	
 	def get_template_names(self):
 		templates = [
-			'ticketeer/tickets/%s/add.html' % backend.key,
-			'ticketeer/tickets/add.html'
+			'ticketeer/tickets/%s/new.html' % backend.key,
+			'ticketeer/tickets/new.html'
 		]
 		if self.template_name is not None:
 			templates.insert(0, self.template_name)
 		return templates
 	
 	def form_valid(self, form):
-		backend.add_ticket(form.cleaned_data)
-		return super(TicketAddView, self).form_valid(form)
+		self.ticket_id = backend.add_ticket(self.request, form.cleaned_data)
+		return super(TicketCreateView, self).form_valid(form)
+	
+	def get_success_url(self):
+		return reverse("ticketeer_ticket_detail", kwargs={'ticket_id': self.ticket_id})

@@ -1,0 +1,4 @@
+{% load url from future %}
+<form class='search' action="{% url 'ticketeer_ticket_list' %}" method="get">
+	{{ form.q }}
+</form>

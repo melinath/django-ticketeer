@@ -35,6 +35,24 @@ class TracBackend(BaseBackend):
 		query = self._build_query(constraints)
 		return query.execute()
 	
+	def add_ticket(self, request, cleaned_data):
+		"""Initializes a trac ticket, saves it to the database, and returns
+		the result."""
+		if request.user.is_anonymous():
+			user = 'anonymous'
+		else:
+			user = request.user.username
+		
+		data = {
+			'summary': cleaned_data['summary'],
+			'description': cleaned_data['description'],
+			'reporter': user,
+		}
+		ticket = Ticket(self.env)
+		ticket.populate(data)
+		ticket_id = ticket.insert()
+		return ticket_id
+	
 	def _build_query(self, constraints):
 		"""
 		Builds a :class:`trac.ticket.query.Query` object from this form's cleaned_data.
