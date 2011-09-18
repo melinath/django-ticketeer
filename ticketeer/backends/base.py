@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class BaseQueryForm(forms.Form):
-	q = forms.CharField(label=_("Search"), required=False)
+	q = forms.CharField(label=_("Search"), required=False, widget=forms.TextInput(attrs={'type': 'search', 'placeholder': _("Search")}))
 
 
 class BaseAddForm(forms.Form):

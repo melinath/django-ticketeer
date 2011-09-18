@@ -2,6 +2,9 @@
 @import "compass/css3";
 
 $em: 14px;
+$main-width: 800px;
+$main-padding:2*$em;
+$main-padded-width: 800px - 2*$main-padding;
 
 html, body, #container{
 	width:100%;
@@ -13,6 +16,10 @@ html, body, #container{
 #main, #container > header h1, #container > header nav ul{
 	width:800px;
 	margin:auto;
+}
+#main{
+	width:800px - 4*$em;
+	padding:2*$em;
 }
 
 #container{
@@ -61,9 +68,39 @@ html, body, #container{
 #main{
 	@include box-shadow(#444, 0, 0, 5px);
 	background:#ccc;
+	margin-top:2*$em;
 	
-	p, table, blockquote, ul, ol{
+	p, table, blockquote, ul, ol, form{
 		line-height: 1.5em;
 		margin-bottom:1.5*$em;
+	}
+	table{
+		width:100%;
+	}
+}
+
+form.search input{
+	width:$main-padded-width - .5*$em - 2px;
+	margin:0 auto;
+	line-height:1.5*$em;
+	padding-left:.5*$em;
+	height:1.5*$em;
+	border: {
+		width:1px;
+		style:solid;
+		color:#777;
+	}
+	@include border-radius(.75*$em + 2px);
+	@include box-shadow(inset 0 0 1px #000);
+}
+
+body.home #main form.search{
+	margin-bottom:0;
+	input{
+		font-size:2*$em;
+		line-height:3*$em;
+		height:3*$em;
+		padding-left:$em;
+		@include border-radius(1.5*$em + 2px);
 	}
 }

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.importlib import import_module
 
@@ -17,3 +18,6 @@ def load_backend(path):
 		raise ImproperlyConfigured('Module "%s" does not define a "%s" ticketeer backend' % (module, attr))
 
 	return cls()
+
+
+backend = load_backend(settings.TICKETEER_BACKEND)

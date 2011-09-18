@@ -1,11 +1,7 @@
 {% extends 'ticketeer/__base.html' %}
 
 {% block content %}
-	<form method='get' action='{{ request.path }}'>
-		<table>
-			{{ form }}
-		</table>
-	</form>
+	{% include "ticketeer/_search_form.html" %}
 	<table>
 		<thead>
 			<th>Ticket ID</th>

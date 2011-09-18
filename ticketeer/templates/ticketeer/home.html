@@ -1,1 +1,5 @@
 {% extends "ticketeer/__base.html" %}
+
+{% block bodyclasses %}home {{ block.super }}{% endblock %}
+
+{% block content %}{% include "ticketeer/_search_form.html" %}{% endblock %}
