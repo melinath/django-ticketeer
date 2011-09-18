@@ -1,27 +1,20 @@
 {% extends 'ticketeer/__base.html' %}
 
-{% load humanize %}
-
 {% block content %}
-	<article>
-		{% block ticket %}
-		<article>
-			<header>
-				<h1>{{ ticket.summary }}</h1>
-				<h2>Opened by {{ ticket.reporter }} <date>{{ ticket.time|naturaltime }}</date></h2>
-				{% if ticket.changetime != ticket.time %}
-					<h2>Last changed {{ ticket.changetime|naturaltime }}</h2>
-				{% endif %}
-				{% if ticket.owner %}
-					<h2>Owned by {{ ticket.owner }}</h2>
-				{% endif %}
-			</header>
-			
-			{{ ticket.description }}
-		</article>
+	{% block ticket %}
+	<article class='ticket'>
+		<header>
+			{% block ticket_header %}
+			<h1>{{ ticket.summary }}</h1>
+			{% endblock %}
+		</header>
+		
+		{% block ticket_content %}
+		{{ ticket.description }}
 		{% endblock %}
 		
 		<footer>
+			<h1>Modify ticket</h1>
 			{% block ticket_form %}
 				<form method='post' action='{{ request.path }}'>{% csrf_token %}
 					<table>
@@ -30,10 +23,13 @@
 								<td><button type="submit">Save changes</button></td>
 							</tr>
 						</tfoot>
+						<tbody>
 						{{ form }}
+						</tbody>
 					</table>
 				</form>
 			{% endblock %}
 		</footer>
 	</article>
+	{% endblock %}
 {% endblock %}

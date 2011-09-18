@@ -19,8 +19,10 @@ class BaseAddForm(forms.Form):
 	description = forms.CharField(label=_("Description"), widget=forms.Textarea)
 
 
-class BaseEditForm(BaseAddForm):
-	comment = forms.CharField(label=_("Comment"), widget=forms.TextInput)
+class BaseEditForm(forms.Form):
+	summary = forms.CharField(label=_("Summary"), required=False)
+	description = forms.CharField(label=_("Description"), widget=forms.Textarea, required=False)
+	comment = forms.CharField(label=_("Comment"), widget=forms.TextInput, required=False)
 
 
 class BaseBackend(object):

@@ -1,0 +1,18 @@
+{% extends "ticketeer/tickets/detail.html" %}
+
+{% load humanize trac_wiki %}
+
+{% block ticket_header %}
+	{{ block.super }}
+	<h2>Opened by <span class="user">{{ ticket.reporter }}</span> <time datetime="{{ ticket.time|date:'c' }}">{{ ticket.time|naturaltime }}</time></h2>
+	{% if ticket.changetime != ticket.time %}
+		<h2>Last changed <time datetime="{{ ticket.changetime|date:'c' }}">{{ ticket.changetime|naturaltime }}</time></h2>
+	{% endif %}
+	{% if ticket.owner %}
+		<h2>Owned by <span class="user">{{ ticket.owner }}</span></h2>
+	{% endif %}
+{% endblock %}
+
+{% block ticket_content %}
+	{{ ticket.description|trac_wiki|safe }}
+{% endblock %}

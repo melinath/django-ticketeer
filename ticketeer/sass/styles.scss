@@ -5,12 +5,16 @@ $em: 14px;
 $main-width: 800px;
 $main-padding:2*$em;
 $main-padded-width: 800px - 2*$main-padding;
+$input-width: 350px;
 
 html, body, #container{
 	width:100%;
 	height:100%;
 	background:#aaa;
+}
+body, textarea, input, button{
 	font-size:$em;
+	font-family:Georgia;
 }
 
 #main, #container > header h1, #container > header nav ul{
@@ -23,8 +27,6 @@ html, body, #container{
 }
 
 #container{
-	position:relative;
-	
 	& > header{
 		background:#222224;
 		h1 a{
@@ -54,49 +56,86 @@ html, body, #container{
 			}
 		}
 	}
-}
-
-#container > footer {
-	background:#222224;
-	min-height:10*$em;
-	position:absolute;
-	bottom:0;
-	left:0;
-	width:100%;
+	& > footer {
+		background:#222224;
+		min-height:10*$em;
+		width:100%;
+	}
 }
 
 #main{
 	@include box-shadow(#444, 0, 0, 5px);
 	background:#ccc;
-	margin-top:2*$em;
+	margin:2*$em auto;
+	
+	em{font-style:italic;}
+	strong{font-weight:bold;}
 	
 	p, table, blockquote, ul, ol, form{
-		line-height: 1.5em;
+		line-height: 1.5*$em;
 		margin-bottom:1.5*$em;
+		&:last-child{
+			margin-bottom:0;
+		}
+	}
+	h1, h2, h3{
+		margin-bottom:$em;
+	}
+	h1{
+		font-size:2*$em;
+	}
+	h2{
+		font-size:1.75*$em;
+	}
+	h3{
+		font-size:1.5*$em;
 	}
 	table{
 		width:100%;
 	}
-}
-
-form.search input{
-	width:$main-padded-width - .5*$em - 2px;
-	margin:0 auto;
-	line-height:1.5*$em;
-	padding-left:.5*$em;
-	height:1.5*$em;
-	border: {
-		width:1px;
-		style:solid;
-		color:#777;
+	input, textarea{
+		line-height:1.5*$em;
+		padding-left:.5*$em;
+		min-height:1.5*$em;
+		resize:none;
+		border: {
+			width:1px;
+			style:solid;
+			color:#777;
+		}
+		@include border-radius(.75*$em + 2px);
+		@include box-shadow(inset 0 0 1px #000);
+		width: $input-width - .5*$em - 2px;
+		&:focus{
+			border-color:#222;
+		}
+		&.error{
+			border-color:#d00;
+		}
 	}
-	@include border-radius(.75*$em + 2px);
-	@include box-shadow(inset 0 0 1px #000);
+	article{
+		&.ticket{
+			header{
+				margin-bottom:$em;
+				h2{
+					font-style:italic;
+					font-size:$em;
+					display:inline;
+					&:after{content:". "}
+				}
+			}
+		}
+		footer{
+			border-top:1px solid;
+			padding:2*$em 2*$em 0;
+			margin: 2*$em -2*$em 0;
+		}
+	}
 }
 
 body.home #main form.search{
-	margin-bottom:0;
 	input{
+		width:$main-padded-width - .5*$em - 2px;
 		font-size:2*$em;
 		line-height:3*$em;
 		height:3*$em;

@@ -12,6 +12,9 @@ from trac.ticket.query import Query
 from ticketeer.backends.base import BaseBackend
 
 
+TRAC_ENV = Environment(settings.TICKETEER_TRAC_ENV)
+
+
 class TracBackend(BaseBackend):
 	"""
 	Provides methods for returning the necessary data for a ticket search/a filtered ticket view, a ticket detail view, and an attachment (diff) view.
@@ -22,7 +25,7 @@ class TracBackend(BaseBackend):
 	key = 'trac'
 	
 	def __init__(self):
-		self.env = Environment(settings.TICKETEER_TRAC_ENV)
+		self.env = TRAC_ENV
 	
 	def get_ticket(self, ticket_id=None):
 		"""Returns a ticket from the database for the given ticket_id. The ticket should be treated like a dictionary for data access."""
@@ -50,10 +53,14 @@ class TracBackend(BaseBackend):
 	
 	def edit_ticket(self, request, ticket, cleaned_data):
 		"""Stores data in a loaded trac ticket and saves the changes to trac's database. Note that if there are no changes, trac will not issue a database query."""
-		data = {
-			'summary': cleaned_data['summary'],
-			'description': cleaned_data['description'],
-		}
+		data = {}
+		summary = cleaned_data.get('summary')
+		description = cleaned_data.get('description')
+		if summary:
+			data['summary'] = summary
+		if description:
+			data['description'] = description
+		
 		ticket.populate(data)
 		author = self._get_trac_user(request.user)
 		comment = cleaned_data['comment']
