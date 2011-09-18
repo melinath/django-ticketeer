@@ -63,7 +63,14 @@ class TicketDetailView(FormView, DetailView):
 	
 	def get_context_data(self, **kwargs):
 		self.object = self.get_object()
-		return DetailView.get_context_data(self, object=self.object, **kwargs)
+		context = DetailView.get_context_data(self, object=self.object, **kwargs)
+		
+		try:
+			context['ticket_changes'] = backend.get_ticket_changes(self.object)
+		except NotImplementedError:
+			pass
+		
+		return context
 	
 	def get_success_url(self):
 		return reverse("ticketeer_ticket_detail", kwargs={'ticket_id': self.kwargs['ticket_id']})

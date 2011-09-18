@@ -8,6 +8,7 @@ from trac.env import Environment
 from trac.ticket.api import TicketSystem
 from trac.ticket.model import Ticket
 from trac.ticket.query import Query
+from trac.ticket.web_ui import TicketModule
 
 from ticketeer.backends.base import BaseBackend
 
@@ -49,6 +50,7 @@ class TracBackend(BaseBackend):
 	def add_ticket(self, request, cleaned_data):
 		"""Initializes a trac ticket, saves it to the database, and returns
 		the result."""
+		# Trac's version: trac.ticket.web_ui:375 (_process_newticket_request)
 		data = {
 			'summary': cleaned_data['summary'],
 			'description': cleaned_data['description'],
@@ -61,6 +63,7 @@ class TracBackend(BaseBackend):
 	
 	def edit_ticket(self, request, ticket, cleaned_data):
 		"""Stores data in a loaded trac ticket and saves the changes to trac's database. Note that if there are no changes, trac will not issue a database query."""
+		# Trac's version: trac.ticket.web_ui:445 (_process_ticket_request)
 		data = {}
 		summary = cleaned_data.get('summary')
 		description = cleaned_data.get('description')
@@ -73,6 +76,15 @@ class TracBackend(BaseBackend):
 		author = self._get_trac_user(request.user)
 		comment = cleaned_data['comment']
 		ticket.save_changes(author, comment)
+	
+	def get_ticket_changes(self, ticket):
+		"""Actually calls :meth:`trac.ticket.web_ui.TicketModule.grouped_changelog_entries` since the alternative is to reimplement that method."""
+		module = TicketModule(self.env)
+		return list(module.grouped_changelog_entries(ticket, None))
+	
+	def _group_changes(self, ticket):
+		"""Generator for dictionaries of grouped changes in a changelog."""
+		# Based on trac.ticket.web_ui:
 	
 	def _get_trac_user(self, user):
 		"""Returns trac's way of viewing a given user."""

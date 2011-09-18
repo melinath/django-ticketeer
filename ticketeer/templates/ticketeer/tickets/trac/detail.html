@@ -16,3 +16,31 @@
 {% block ticket_content %}
 	{{ ticket.description|trac_wiki|safe }}
 {% endblock %}
+
+{% block ticket_changes %}
+{% for change in ticket_changes %}
+	<article class='comment'>
+		<header>
+			<h1>Changed <time datetime="{{ change.date|date:'c' }}">{{ change.date|naturaltime }}</time> by <span class='user'>{{ change.author }}</span></h1>
+		</header>
+		{% if change.fields %}
+			<dl>
+				{% comment %}TODO: This shouldn't hard-code ems.{% endcomment %}
+				{% for field in change.fields.values %}
+				<dt>{{ field.label }}</dt>
+				{% if field.old and field.new %}
+					<dd>Changed from <em>{{ field.old }}</em> to <em>{{ field.new }}</em></dd>
+				{% else %}
+					{% if field.old %}
+						<dd>Deleted.</dd>
+					{% else %}
+						<dd>Set to <em>{{ field.new }}</em>.</dd>
+					{% endif %}
+				{% endif %}
+				{% endfor %}
+			</dl>
+		{% endif %}
+		{{ change.comment|trac_wiki|safe }}
+	</article>
+{% endfor %}
+{% endblock %}

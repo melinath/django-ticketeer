@@ -57,3 +57,7 @@ class BaseBackend(object):
 	def edit_ticket(self, request, ticket, cleaned_data):
 		"""Receives a request, a "ticket object" as returned by :meth:`.get_ticket`, and cleaned_data from an EditForm and saves the changes to the backend."""
 		raise NotImplementedError
+	
+	def get_ticket_changes(self, ticket):
+		"""Given a ticket as returned by :meth:`.get_ticket`, returns a list of changes to the ticket."""
+		raise NotImplementedError

@@ -71,13 +71,15 @@ body, textarea, input, button{
 	em{font-style:italic;}
 	strong{font-weight:bold;}
 	
-	p, table, blockquote, ul, ol, form{
+	p, table, blockquote, ul, ol, dl, form{
 		line-height: 1.5*$em;
 		margin-bottom:1.5*$em;
 		&:last-child{
 			margin-bottom:0;
 		}
 	}
+	dt{font-weight:bold;}
+	dd{text-indent:2*$em;}
 	h1, h2, h3{
 		margin-bottom:$em;
 	}
@@ -87,8 +89,15 @@ body, textarea, input, button{
 	h2{
 		font-size:1.75*$em;
 	}
-	h3{
+	h3, article.comment h1{
 		font-size:1.5*$em;
+	}
+	h4, article.comment h2{
+		font-size:1.25*$em;
+	}
+	h5, article.comment h3{
+		font-size:$em;
+		font-weight:bold;
 	}
 	table{
 		width:100%;
@@ -132,7 +141,7 @@ body, textarea, input, button{
 				}
 			}
 		}
-		footer{
+		footer, &.comment{
 			border-top:1px solid;
 			padding:2*$em 2*$em 0;
 			margin: 2*$em -2*$em 0;
