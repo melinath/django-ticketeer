@@ -15,6 +15,14 @@ from ticketeer.backends.base import BaseBackend
 TRAC_ENV = Environment(settings.TICKETEER_TRAC_ENV)
 
 
+class TracTicket(Ticket):
+	"""Wraps a trac ticket so that the id can be fetched in templates."""
+	def __getitem__(self, name):
+		if name == 'id':
+			return self.id
+		return Ticket.__getitem__(self, name)
+
+
 class TracBackend(BaseBackend):
 	"""
 	Provides methods for returning the necessary data for a ticket search/a filtered ticket view, a ticket detail view, and an attachment (diff) view.
@@ -29,7 +37,7 @@ class TracBackend(BaseBackend):
 	
 	def get_ticket(self, ticket_id=None):
 		"""Returns a ticket from the database for the given ticket_id. The ticket should be treated like a dictionary for data access."""
-		return Ticket(self.env, ticket_id, version=None)
+		return TracTicket(self.env, ticket_id, version=None)
 	
 	def get_ticket_list(self, cleaned_data):
 		clauses = []

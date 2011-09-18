@@ -5,7 +5,7 @@
 	<article class='ticket'>
 		<header>
 			{% block ticket_header %}
-			<h1>{{ ticket.summary }}</h1>
+			<h1><a href="{{ request.path }}">#{{ ticket.id }}: {{ ticket.summary }} (<span class="type">{{ ticket.type }}</span>)</a></h1>
 			{% endblock %}
 		</header>
 		

@@ -17,8 +17,9 @@
 		{% block ticket_list_item %}
 			<tr>
 				{% block ticket_list_item_fields %}
-				<td><a href="{% url ticketeer_ticket_detail ticket_id=ticket.id %}">{{ ticket.id }}</a></td>
-				<td>{{ ticket.summary }}</td>
+				{% url ticketeer_ticket_detail ticket_id=ticket.id as ticket_url %}
+				<td><a href="{{ ticket_url }}">{{ ticket.id }}</a></td>
+				<td><a href="{{ ticket_url }}">{{ ticket.summary }}</a></td>
 				{% endblock %}
 			</tr>
 		{% endblock %}
