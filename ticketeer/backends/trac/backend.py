@@ -38,20 +38,30 @@ class TracBackend(BaseBackend):
 	def add_ticket(self, request, cleaned_data):
 		"""Initializes a trac ticket, saves it to the database, and returns
 		the result."""
-		if request.user.is_anonymous():
-			user = 'anonymous'
-		else:
-			user = request.user.username
-		
 		data = {
 			'summary': cleaned_data['summary'],
 			'description': cleaned_data['description'],
-			'reporter': user,
+			'reporter': self._get_trac_user(request.user),
 		}
 		ticket = Ticket(self.env)
 		ticket.populate(data)
 		ticket_id = ticket.insert()
 		return ticket_id
+	
+	def edit_ticket(self, request, ticket, cleaned_data):
+		"""Stores data in a loaded trac ticket and saves the changes to trac's database. Note that if there are no changes, trac will not issue a database query."""
+		data = {
+			'summary': cleaned_data['summary'],
+			'description': cleaned_data['description'],
+		}
+		ticket.populate(data)
+		author = self._get_trac_user(request.user)
+		comment = cleaned_data['comment']
+		ticket.save_changes(author, comment)
+	
+	def _get_trac_user(self, user):
+		"""Returns trac's way of viewing a given user."""
+		return 'anonymous' if user.is_anonymous() else user.username
 	
 	def _build_query(self, constraints):
 		"""

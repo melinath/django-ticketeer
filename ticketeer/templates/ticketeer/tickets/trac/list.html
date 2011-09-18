@@ -1,0 +1,13 @@
+{% extends 'ticketeer/tickets/list.html' %}
+
+{% block ticket_list_headers %}
+{{ block.super }}
+<th>Reporter</th>
+<th>Owner</th>
+{% endblock %}
+
+{% block ticket_list_item_fields %}
+{{ block.super }}
+<td>{{ ticket.reporter }}</td>
+<td>{{ ticket.owner }}</td>
+{% endblock %}

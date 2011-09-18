@@ -1,16 +1,29 @@
 {% extends 'ticketeer/__base.html' %}
 
 {% block content %}
+	{% block search_form %}
 	{% include "ticketeer/_search_form.html" %}
+	{% endblock %}
+	{% block ticket_list %}
 	<table>
 		<thead>
+			{% block ticket_list_headers %}
 			<th>Ticket ID</th>
 			<th>Summary</th>
+			{% endblock %}
 		</thead>
 		<tbody>
 		{% for ticket in ticket_list %}
-			{% include "ticketeer/tickets/_list.html" %}
+		{% block ticket_list_item %}
+			<tr>
+				{% block ticket_list_item_fields %}
+				<td><a href="{% url ticketeer_ticket_detail ticket_id=ticket.id %}">{{ ticket.id }}</a></td>
+				<td>{{ ticket.summary }}</td>
+				{% endblock %}
+			</tr>
+		{% endblock %}
 		{% endfor %}
 		</tbody>
 	</table>
+	{% endblock %}
 {% endblock %}

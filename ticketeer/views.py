@@ -58,12 +58,15 @@ class TicketDetailView(FormView, DetailView):
 		return templates
 	
 	def form_valid(self, form):
-		backend.edit_ticket(form.cleaned_data)
+		backend.edit_ticket(self.request, self.get_object(), form.cleaned_data)
 		return super(TicketDetailView, self).form_valid(form)
 	
 	def get_context_data(self, **kwargs):
 		self.object = self.get_object()
 		return DetailView.get_context_data(self, object=self.object, **kwargs)
+	
+	def get_success_url(self):
+		return reverse("ticketeer_ticket_detail", kwargs={'ticket_id': self.kwargs['ticket_id']})
 
 
 class TicketCreateView(FormView):

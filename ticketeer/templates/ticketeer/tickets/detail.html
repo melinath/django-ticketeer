@@ -1,14 +1,39 @@
 {% extends 'ticketeer/__base.html' %}
 
+{% load humanize %}
+
 {% block content %}
-	{% block ticket %}
 	<article>
-		{% include 'ticketeer/tickets/_detail.html' %}
-		<form method='post' action='{{ request.path }}'>
-			<table>
-				{{ form }}
-			</table>
-		</form>
+		{% block ticket %}
+		<article>
+			<header>
+				<h1>{{ ticket.summary }}</h1>
+				<h2>Opened by {{ ticket.reporter }} <date>{{ ticket.time|naturaltime }}</date></h2>
+				{% if ticket.changetime != ticket.time %}
+					<h2>Last changed {{ ticket.changetime|naturaltime }}</h2>
+				{% endif %}
+				{% if ticket.owner %}
+					<h2>Owned by {{ ticket.owner }}</h2>
+				{% endif %}
+			</header>
+			
+			{{ ticket.description }}
+		</article>
+		{% endblock %}
+		
+		<footer>
+			{% block ticket_form %}
+				<form method='post' action='{{ request.path }}'>{% csrf_token %}
+					<table>
+						<tfoot>
+							<tr>
+								<td><button type="submit">Save changes</button></td>
+							</tr>
+						</tfoot>
+						{{ form }}
+					</table>
+				</form>
+			{% endblock %}
+		</footer>
 	</article>
-	{% endblock %}
 {% endblock %}
